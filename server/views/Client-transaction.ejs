@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../src/css/Client-acceuil.css">
+    <link rel="stylesheet" href="../src/css/Client-transaction.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link
+      href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <!-- Inclure jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Inclure DataTables -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+      const defaultTheme = tailwind.defaultTheme;
+      const colors = tailwind.colors;
+      const plugin = tailwind.plugin;
+
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", ...defaultTheme.fontFamily.sans],
+            },
+          },
+        },
+      };
+    </script>
+</head>
+<body class="bg-slate-100">
+    <header>
+        <nav class="bg-gray-800">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-16 items-center justify-between">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <!-- Mobile menu button-->
+        <button type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="absolute -inset-0.5"></span>
+          <span class="sr-only">Open main menu</span>
+          <!--
+            Icon when menu is closed.
+
+            Menu open: "hidden", Menu closed: "block"
+          -->
+          <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <!--
+            Icon when menu is open.
+
+            Menu open: "block", Menu closed: "hidden"
+          -->
+          <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex flex-shrink-0 items-center">
+          <img class="h-8 w-auto" src="../src/img/logo.png"  alt="Your Company">
+        </div>
+        <div class="hidden sm:ml-6 sm:block">
+          <div class="flex space-x-4 hidden">
+            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+            <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
+            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
+            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
+            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+          </div>
+        </div>
+      </div>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" onclick="deleteAllCookies()">
+          <span class="absolute -inset-1.5"></span>
+          <span class="sr-only">View notifications</span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
+          </svg>
+          
+        </button>
+
+        <!-- Profile dropdown -->
+        <div class="relative ml-3">
+          <div class="flex space-x-2 text-[]">
+            <button type="button" item id="btn_with_pic"  class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+              <span class="absolute -inset-1.5"></span>
+              <span class="sr-only">Open user menu</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>              
+            </button>
+            <span>
+              <span class="text-[12px] text-white font-semibold">
+                <!-- 13028404K -->
+              </span>
+            </span>
+          </div>
+        
+          <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" id="mini-menu" aria-labelledby="user-menu-button" tabindex="-1">
+            <!-- Active: "bg-gray-100", Not Active: "" -->
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">
+              <span>
+                <span class="text-[14px]">Yann Hallage</span> <br><span class="text-[#ccc]">developper</span>
+              </span>
+            </a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  <div class="sm:hidden hidden" id="mobile-menu">
+    <div class="space-y-1 px-2 pb-3 pt-2">
+      <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+      <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Dashboard</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+    </div>
+  </div>
+</nav>
+    </header>
+    <section>
+      <div class=" mt-[50px] ">
+        <div class="container  mx-auto space-y-4">
+          <span class="text-2xl font-bold">Transactions </span>
+          <div class="text-[11px] py-5 space-x-3" >  
+            <span class="border hover:opacity-50  cursor-pointer p-4 rounded-full bg-white text-[11px]" id="btn-return">
+              <span><i class="bi bi-arrow-left-square"></i></span>
+              <span>Retour</span>
+            </span>
+            <span class="text-[19px] text-blue-700"><i class="bi bi-question-circle"></i></span>
+          </div>
+        </div>
+        <!-- les autres  -->
+        <div class="text-[11px]">
+           <div class=" p-4 container mx-auto rounded-md">
+             <div class="" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;">
+               <span class="border p-4  rounded-md bg-white cursor-pointer hover:opacity-50  text-[11px]" id="btn-sold">Solde</span>
+               <span class="border p-4  rounded-md bg-white cursor-pointer hover:opacity-50  text-[11px]" id="btn-versmt">Versement</span>
+               <span class="border p-4  rounded-md bg-white cursor-pointer hover:opacity-50  text-[11px]" id="btn-retrait">Retrait</span>
+               <span class="border p-4  rounded-md bg-white text-[11px] cursor-pointer hover:opacity-50 " id="file_c">Consuler les fiches</span>
+             </div>
+           </div>
+            <div class="container mx-auto bg-gray-50">
+              <!-- div pour tout cqui sera afficher et gerer -->
+               <div class=" rounded-md p-5 text-[14px] space-y-3">
+                  <div class="" id="solde">
+                    <!-- sold -->
+                    <div class="">
+                      <!-- affichage du solde (montant actuel et retirer ) -->
+                        <div class="text-center border p-2 bg-slate-100 text-xl font-bold">
+                          <span>Details du solde</span>
+                        </div>
+                        <!--  -->
+                        <div class="border p-5 mt-3 space-y-4 rounded-md bg-slate-100">
+                          <div class="text-xl font-bold">
+                            <span> Caisse</span>
+                          </div>
+                          <div class="flex justify-between ">
+                            <span class="border p-5 bg-white ">
+                              <span class="text-green-500"><i class="bi bi-record-fill "></i></span>
+                              <span class="text-[20px]" ><%= soldeTotal %> FCFA</span><br><span class="ml-4 text-[12px] text-[#555]">Montant solde</span>
+                            </span>
+                            <span class="border p-5 bg-white ">
+                              <span class="text-green-500"><i class="bi bi-record-fill "></i></span>
+                              <span class="text-[20px]" ><%= soldeTotal %> FCFA</span><br><span class="ml-4 text-[12px] text-[#555]">Montant de versement</span>
+                            </span>
+                            <!-- <span>
+                              <span class="text-yellow-500"><i class="bi bi-record-fill"></i></span>
+                              <span class="text-[14px] font-bold">215.000.000 FCFA</span><br><span class="ml-4 text-[12px] text-[#555]" >Montant (mois de juin)</span>
+                            </span> -->
+                            <span class="border p-5 bg-white ">
+                              <span class="text-red-500"> <i class="bi bi-record-fill"></i></span>
+                              <span class="text-[20px]"><%= totalRetraits %> FCFA</span><br><span class="ml-4 text-[12px] text-[#555]">Montant de retrait</span>
+                            </span>
+                          </div>
+                        </div>
+                        <!-- historique de paiemnt -->
+                    <!-- historique de paiement -->
+              <div class="border rounded-md bg-slate-100 p-5 mt-3">
+                <div class="text-xl font-bold">
+                    <span>Table de transaction</span>
+                </div>
+              </div>
+                <div class="border bg-white rounded-md mt-3 p-5 text-[12px]" >
+                  <table id="example" class="display" style="width:100%">
+                      <thead>
+                          <tr>
+                              <th>id</th>
+                              <th>Reference transaction</th>
+                              <th>Matricule client</th>
+                              <th>Nom client</th>
+                              <th>Prénom client</th>
+                              <th>Service client</th>
+                              <th>Direction client</th>
+                              <th>Type opération</th>
+                              <th>Montant opération</th>
+                              <th>Montant lettre</th>
+                              <th>Date opération</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <% transaction.forEach(function(item, index) { %>
+                              <tr>
+                                  <td><%= index + 1 %></td>
+                                  <td><%= item.Reference_transaction %></td>
+                                  <td><%= item.matricule_client %></td>
+                                  <td><%= item.nom_client %></td>
+                                  <td><%= item.prenom_client %></td>
+                                  <td><%= item.service_client %></td>
+                                  <td><%= item.direction_client %></td>
+                                  <td><%= item.type_operation %></td>
+                                  <td><%= item.Montant_operation %></td>
+                                  <td><%= item.montant_lettre %></td>
+                                  <td><%= item.date_transaction %></td>
+                              </tr>
+                          <% }); %>
+                      </tbody>
+                  </table>
+                </div>
+
+
+                    <script>
+                      $(document).ready(function() {
+                          $('#example').DataTable({
+                              paging: true, // Active la pagination
+                              searching: true, // Active la recherche
+                              ordering: true, // Active le tri
+                              lengthMenu: [10, 25, 50, 100], // Nombre d'entrées par page
+                              language: {
+                                  "lengthMenu": "Afficher _MENU_ entrées",
+                                  "zeroRecords": "Aucun enregistrement trouvé",
+                                  "info": "Affichage de la page _PAGE_ sur _PAGES_",
+                                  "infoEmpty": "Aucun enregistrement disponible",
+                                  "infoFiltered": "(filtré à partir de _MAX_ total d'enregistrements)",
+                                  "search": "Recherche:",
+                                  "paginate": {
+                                      "first": "Premier",
+                                      "last": "Dernier",
+                                      "next": "Suivant",
+                                      "previous": "Précédent"
+                                  }
+                              },
+                              
+                          });
+                      });
+                    </script>
+
+                         </div>
+                      </div>
+                  </div>
+                  <!--versement  -->
+                  <div class="hidden space-y-3 p-4" id="versement">
+                    <!-- versement -->
+                    <div class="text-center text-2xl p-2 font-bold bg-slate-100 border">
+                      <span>Operation sur versement</span>
+                    </div>
+                    <div class="p-4 bg-white rounded-md shadow-lg">
+                        <div class="space-y-4">
+                            <!-- Groupe de comptes -->
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-[16px] font-semibold" for="groupe-comptes">Origne des fonds </label>
+                                <select name="groupe-comptes" id="groupe-comptes" class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">--Veuillez choisir une option--</option>
+                                    <option value="dog">Argent liquide</option>
+                                    <!-- <option value="cat">Cat</option>
+                                    <option value="hamster">Hamster</option>
+                                    <option value="parrot">Parrot</option>
+                                    <option value="spider">Spider</option>
+                                    <option value="goldfish">Goldfish</option> -->
+                                </select>
+                            </div>
+                
+                            <!-- Compte -->
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-[16px] font-semibold" for="compte">Compte :</label>
+                                <input type="text" id="compte" name="compte" placeholder="ex: XXXX-XXXX-XXXX-XXXX"
+                                    class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                
+                            <!-- Période -->
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-[16px] font-semibold" for="periode">Période :</label>
+                                <select name="periode" id="periode" class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">--Veuillez choisir une option--</option>
+                                    <option value="janvier">Janvier</option>
+                                    <option value="fevrier">Février</option>
+                                    <option value="mars">Mars</option>
+                                    <option value="juin">Juin</option>
+                                </select>
+                            </div>
+                        </div>
+                
+                        <!-- Informations sur le déposant -->
+                        <div class="border mt-4 p-4 space-y-4 bg-gray-50 rounded-md">
+                            <div class="">
+                                <span class="text-[16px] font-semibold">Informations sur le déposant</span>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="nom">Nom :</label>
+                                        <input type="text" id="nom" name="nom" placeholder="Nom"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="prenom">Prénom :</label>
+                                        <input type="text" id="prenom" name="prenom" placeholder="Prénom"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="adresse">Adresse :</label>
+                                        <input type="text" id="adresse" name="adresse" placeholder="Adresse"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="adresse">Service :</label>
+                                        <input type="text" id="service" name="adresse" placeholder="Service"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="adresse">Direction :</label>
+                                        <input type="text" id="direction" name="adresse" placeholder="Direction"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Détails du compte -->
+                            <div class="">
+                                <!-- <span class="text-[16px] font-semibold">Détails du compte</span> -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="matricule-deposant">Matricule du déposant :</label>
+                                      <input type="text" id="matricule-deposant" name="matricule-deposant" placeholder="Matricule du déposant"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <!-- <label for="numero-compte">Numéro du compte :</label> -->
+                                        <!-- <input type="text" id="numero-compte" name="numero-compte" placeholder="Numéro du compte"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"> -->
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Montant du versement -->
+                            <div class="">
+                                <span class="text-[16px] font-semibold">Montant du versement</span>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="montant-chiffre">Montant total en chiffres :</label>
+                                        <input type="number" id="montant-chiffre" name="montant-chiffre" placeholder="Montant total en chiffres"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" >
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="montant-lettre">Montant total en lettres :</label>
+                                        <input type="text" id="montant-lettre" name="montant-lettre" placeholder="Montant total en lettres"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Nature du versement -->
+                            <div class="">
+                                <span class="text-[16px] font-semibold">Nature du versement</span>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="type-versement">Type de versement :</label>
+                                        <input type="text" id="type-versement" name="type-versement" value="ref_versement_2024"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                            disabled
+                                            >
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="type-versement">Motif du versement :</label>
+                                        <input type="text" id="motif-versement" name="type-versement" 
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="motif du versement">
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <label for="date-versement">Date du versement :</label>
+                                        <input type="date" id="date-versement" name="date-versement" value="2019-01-01"
+                                            class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- Validation -->
+                            <div class="flex justify-end space-x-2">
+                                <button  id="Validation_versement" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    Enregistrer
+                                </button>
+                                <button id="effacer_btn"  class="btn btn-primary bg-red-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    effacer <span><i class="bi bi-trash3"></i></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <!-- retrait -->
+                  <div id="Retrait" class="hidden space-y-4 p-4">
+                    <div class="text-center text-2xl p-2 font-bold bg-slate-100 border">
+                        <span>Operation sur retrait</span>
+                    </div>
+                    <div class="p-4 bg-white rounded-md shadow-lg">
+                     
+              
+                      <!-- Informations sur le bénéficiaire -->
+                      <div class="border mt-4 p-4 space-y-4 bg-gray-50 rounded-md">
+                          <div class="">
+                              <span class="text-[16px] font-semibold">Informations sur le bénéficiaire</span>
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="nom-beneficiaire">Nom :</label>
+                                      <input type="text" id="nom-beneficiaire" name="nom-beneficiaire" placeholder="Nom"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="prenom-beneficiaire">Prénom :</label>
+                                      <input type="text" id="prenom-beneficiaire" name="prenom-beneficiaire" placeholder="Prénom"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="adresse-beneficiaire">Service :</label>
+                                      <input type="text" id="service-beneficiaire" name="adresse-beneficiaire" placeholder="Service"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="service-beneficiaire">Direction :</label>
+                                      <input type="text" id="direction-beneficiaire" name="adresse-beneficiaire" placeholder="Direction"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="direction-beneficiaire">Adresse :</label>
+                                      <input type="text" id="adresse-beneficiaire" name="adresse-beneficiaire" placeholder="Adresse"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                              </div>
+                          </div>
+              
+                          <!-- Détails du compte -->
+                          <div class="">
+                              <!-- <span class="text-[16px] font-semibold">Détails du compte</span> -->
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <!-- <div class="flex flex-col space-y-2">
+                                      <label for="numero-compte-retrait">Numéro du compte :</label>
+                                      <input type="text" id="numero-compte-retrait" name="numero-compte" placeholder="Numéro du compte"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div> -->
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="matricule-beneficiaire">Matricule du bénéficiaire :</label>
+                                      <input type="text" id="matricule-beneficiaire" name="matricule-beneficiaire" placeholder="Matricule du bénéficiaire"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                              </div>
+                          </div>
+              
+                          <!-- Montant du retrait -->
+                          <div class="">
+                              <span class="text-[16px] font-semibold">Montant du retrait</span>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="montant-chiffre-retrait">Montant total en chiffres :</label>
+                                      <input type="number" id="montant-chiffre-retrait" name="montant-chiffre-retrait" placeholder="Montant total en chiffres"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="montant-lettre-retrait">Montant total en lettres :</label>
+                                      <input type="text" id="montant-lettre-retrait" name="montant-lettre-retrait" placeholder="Montant total en lettres"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                              </div>
+                          </div>
+              
+                          <!-- Nature du retrait -->
+                          <div class="">
+                              <span class="text-[16px] font-semibold">Nature du retrait</span>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="type-retrait">Type de Transaction :</label>
+                                      <input type="text" id="type-retrait" name="type-retrait" value="ref_retrait_2024" disabled
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="type-retrait">motif du retrait :</label>
+                                      <input type="text" id="motif-retrait" name="type-retrait" placeholder="motif du retrait"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                                  <div class="flex flex-col space-y-2">
+                                      <label for="date-retrait">Date du retrait :</label>
+                                      <input type="date" id="date-retrait" name="date-retrait" value="2019-01-01"
+                                          class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  </div>
+                              </div>
+                          </div>
+              
+                          <!-- Validation -->
+                          <div class="flex justify-end space-x-3">
+                              <button type="submit" id="Validation_retrait" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  Enregistrer
+                              </button>
+                              <button id="effacer_retrait" class="btn btn-primary bg-red-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                  effacer <span><i class="bi bi-trash3"></i></span>
+                              </button>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- consulter les fichiers pdf  -->
+                 <div class="hidden p-4" id="file">
+                  <div class="" id="file">
+                    <div class="text-center bg-slate-100 rounded-md border text-2xl p-2 font-bold">
+                      <span>Consulter les fichiers</span>
+                    </div>
+                    <div class=" p-3 rounded-md  mt-3">
+                        <!-- <div class="border ">
+                          <select name="" id="">
+                            <option value="">Choisir un fichier</option>
+                            <option value="">2023</option>
+                            <option value="">2022</option>
+                            <option value="">2024</option>
+                          </select>
+                        </div> -->
+                        <!-- ls fichier  -->
+                         <div class="mt-5 p-3 bg-white">
+                            <div class="p-5">
+                               <div class="grid md:grid-cols-5 grid-cols-2 gap-4" >
+                                 <% if (pdfFiles && pdfFiles.length > 0) { %>
+                                  <% pdfFiles.forEach(function(pdf,index) { %>
+                                    <div id="pdf-list pdf-container "  class="border p-3 rounded-md flex  justify-center items-center hover:shadow-xl ">
+                                             <span>
+                                            </span>
+                                            <div class="justify-center items-center">
+                                              <img src="src/img/—Pngtree—pdf file icon png_7965915.png" onclick="show_pdf('<%= index %>')" width="79">
+                                              <a href=""   class="text-[11px]" id="pdf<%= index %>"><%= pdf %> </a>
+                                            </div>
+                                    </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <span>Aucun fichier PDF trouvé.</span>
+                                    <% } %>
+                               </div>
+                            </div>
+                         </div>
+                    </div>
+                 </div>
+                 </div>
+             </div>
+               </div>
+            </div>
+         </div>
+      </div>
+    </section>
+</body>
+</html>
+<script>
+  const show_pdf = (e)=>{
+    // a.preventdefault()
+    console.log(e)
+    console.log(document.querySelector('#pdf'+e).innerHTML)
+    let pdf_name= document.querySelector('#pdf'+e).innerHTML
+    // effectuer un fecth
+    fetch('/affiche_pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pdf_name })
+        })
+        .then(response => {
+            return response.text();  // Traiter la réponse en tant que texte HTML
+        })
+        .then(html => {
+            document.open();  // Ouvrir le document
+            document.write(html);  // Insérer le contenu HTML dans le document
+            document.close();  // Fermer l'écriture du document
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert("Une erreur s'est produite lors de l'enregistrement du versement.");
+        });
+  }
+  // Fonction pour charger et afficher le PDF
+function loadPdf(url) {
+    const pdfContainer = document.getElementById('pdf-container');
+    pdfContainer.innerHTML = ''; // Réinitialiser le contenu de la div
+
+    // Charger le PDF
+    const loadingTask = pdfjsLib.getDocument(url);
+    loadingTask.promise.then(function(pdf) {
+        // Afficher toutes les pages
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            pdf.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: 1.5 }); // Zoom ajustable
+
+                // Créer un élément canvas pour chaque page
+                const canvas = document.createElement('canvas');
+                canvas.classList.add('pdf-page');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Ajouter le canvas à la div grid
+                pdfContainer.appendChild(canvas);
+
+                // Rendre la page du PDF dans le canvas
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }
+    }, function(reason) {
+        console.error('Erreur lors du chargement du PDF: ' + reason);
+    });
+}
+
+</script>
+<script src="../Scripts/Client-transaction.js"></script>
+<script src="../Scripts/Client-transaction-retrait.js"></script>
+<script src="../Scripts/Client-deconnexion.js"></script>

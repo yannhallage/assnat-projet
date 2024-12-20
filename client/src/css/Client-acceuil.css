@@ -1,0 +1,15 @@
+*{
+    margin: 0;
+    padding: 0;
+    top: 0;
+}
+
+#mini-menu{
+    visibility: hidden;
+}
+#theme-color{
+    /* font-family: ; */
+    font-size: 15px;
+    font-weight:600;
+    color: black;
+}

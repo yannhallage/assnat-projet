@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../src/css/Client-acceuil.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link
+      href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body class="bg-slate-100">
+    <section class="mt-[50px]">
+      <div class="container mx-auto space-y-4 border">
+        <!-- Titre et Bouton Retour -->
+         <span id="matricule" class="hidden"><%= matricule %></span>
+         <span id="date" class="hidden"><%= date %></span>
+         <div class="p-2 bg-gray-800">
+             <div class="flex space-x-5 flex justify-center items-center" >
+                <img src="srco/img/logo.png" alt="" srcset="">
+             </div>
+         </div>
+      </div>
+      <div class="container mx-auto space-y-4  mt-11" id="contenu">
+        <h2 class="text-2xl font-bold text-center mb-6">Bordereau de retrait </h2>
+    
+        <table class="min-w-full border-collapse border border-gray-300 text-[12px]">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border border-gray-300 px-4 py-2 text-left">Détails</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">Informations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Nom du Payeur :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= nom %> <%= prenom %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Matricule:</td>
+              <td class="border border-gray-300 px-4 py-2"><%= matricule %></td>
+            </tr>
+            <!-- <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Motif:</td>
+              <td class="border border-gray-300 px-4 py-2"><%= motif %></td>
+            </tr> -->
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Service:</td>
+              <td class="border border-gray-300 px-4 py-2"><%= service_retrait %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Direction:</td>
+              <td class="border border-gray-300 px-4 py-2"><%= direction_retrait %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Montant :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= montant %> FCFA</td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Date du Versement :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= date %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Méthode de Paiement :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= type_retrait %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Référence de Transaction :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= transactionRef %></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 px-4 py-2 font-semibold">Description :</td>
+              <td class="border border-gray-300 px-4 py-2"><%= motif %></td>
+            </tr>
+          </tbody>
+        </table>
+    
+        <div class="text-center mt-6">
+          <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600" id="btn_client">Retournez</button>
+        </div>
+      </div>
+      </div>
+    </section>
+    <script>
+      document.querySelector('#btn_client').addEventListener('click', () => {
+          // Utiliser .value si ce sont des inputs
+          let matricule = document.querySelector('#matricule').innerHTML;
+          let date_versement = document.querySelector('#date').innerHTML;
+          console.log(matricule,date_versement)
+          const { jsPDF } = window.jspdf;
+      
+          // Convertir le contenu en image
+          html2canvas(document.querySelector("#contenu"), {
+              scale: 2 // Augmente la qualité de l'image, modifie cette valeur selon tes besoins
+          }).then(canvas => {
+              const imgData = canvas.toDataURL("image/png");
+              const pdf = new jsPDF({
+                  orientation: 'portrait',
+                  unit: 'mm',
+                  format: 'a4'
+              });
+              
+              // Calculer la largeur et la hauteur pour redimensionner
+              const imgWidth = 210; // Largeur souhaitée en mm (A4)
+              const pageHeight = pdf.internal.pageSize.height; // Hauteur de la page PDF
+              const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+              let heightLeft = imgHeight;
+              let position = 0;
+      
+              // Ajouter l'image au PDF
+              pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+              heightLeft -= pageHeight;
+      
+              // Ajouter des pages si l'image dépasse
+              while (heightLeft >= 0) {
+                  position = heightLeft - imgHeight;
+                  pdf.addPage();
+                  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                  heightLeft -= pageHeight;
+              }
+      
+              // Générer le fichier PDF
+              const pdfOutput = pdf.output('blob');
+      
+              // Préparer le formulaire pour l'envoi
+              const formData = new FormData();
+              formData.append('pdf', pdfOutput, 'donnees.pdf');
+              formData.append('matricule', matricule);
+              formData.append('date_versement', date_versement); // Correction de l'orthographe
+      
+              // Envoyer le PDF au serveur
+              fetch('http://localhost:5000/sauvegarder-pdf', {
+                  method: 'POST',
+                  body: formData,
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  console.log(data);
+                  Swal.fire({
+                      title: "Fiche",
+                      text: "Fiche enregistrée avec succès",
+                      icon: "success",
+                      confirmButtonColor: "#3085d6",
+                      confirmButtonText: "OK"
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          window.location.reload();
+                      }
+                  });
+              })
+              .catch(error => {
+                  console.error('Erreur:', error);
+              });
+          });
+      });
+      </script>
+      
+    
+    
+</body>
+</html>
